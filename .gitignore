@@ -5,3 +5,5 @@ dist
 *.zip
 tunnel.sh
 README.md
+src/App.css
+src/assets/
