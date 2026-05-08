@@ -1,0 +1,22 @@
+{
+  "name": "English Kids - 英语启蒙",
+  "short_name": "English Kids",
+  "description": "A fun English learning app for kids - 宝宝英语启蒙",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "landscape-primary",
+  "background_color": "#FFF8EE",
+  "theme_color": "#FFD84B",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
