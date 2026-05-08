@@ -11,7 +11,7 @@ import Settings from './pages/Settings';
 export default function App() {
   return (
     <I18nProvider>
-      <BrowserRouter>
+      <BrowserRouter basename="/english-kids">
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
