@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import { I18nProvider } from './i18n';
 import Layout from './components/Layout';
 import Home from './pages/Home';
@@ -11,7 +11,7 @@ import Settings from './pages/Settings';
 export default function App() {
   return (
     <I18nProvider>
-      <BrowserRouter basename="/english-kids">
+      <HashRouter>
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
@@ -22,7 +22,7 @@ export default function App() {
             <Route path="/settings" element={<Settings />} />
           </Route>
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </I18nProvider>
   );
 }
