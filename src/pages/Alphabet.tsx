@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useI18n } from '../i18n';
 import { useSpeech } from '../hooks/useSpeech';
 import { letters } from '../data/letters';
@@ -16,12 +17,52 @@ export default function Alphabet() {
   const [selected, setSelected] = useState<string | null>(null);
   const [showBurst, setShowBurst] = useState(false);
   const [isTracing, setIsTracing] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isDrawing = useRef(false);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
+  const touchStartX = useRef(0);
 
   const letterKeys = Object.keys(letters);
   const data = selected ? letters[selected as keyof typeof letters] : null;
+
+  const goToPrevLetter = useCallback(() => {
+    const idx = currentIndex > 0 ? currentIndex - 1 : letterKeys.length - 1;
+    const letter = letterKeys[idx];
+    setCurrentIndex(idx);
+    setSelected(letter);
+    speakLetter(letter);
+    setShowBurst(true);
+  }, [currentIndex]);
+
+  const goToNextLetter = useCallback(() => {
+    const idx = currentIndex < letterKeys.length - 1 ? currentIndex + 1 : 0;
+    const letter = letterKeys[idx];
+    setCurrentIndex(idx);
+    setSelected(letter);
+    speakLetter(letter);
+    setShowBurst(true);
+  }, [currentIndex]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    e.preventDefault();
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX.current - touchEndX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        goToNextLetter();
+      } else {
+        goToPrevLetter();
+      }
+    }
+  };
 
   useEffect(() => {
     if (!selected || !canvasRef.current) return;
@@ -115,6 +156,7 @@ export default function Alphabet() {
                   key={letter}
                   onClick={() => {
                     setSelected(letter);
+                    setCurrentIndex(letterKeys.indexOf(letter));
                     speakLetter(letter);
                     setShowBurst(true);
                   }}
@@ -132,13 +174,37 @@ export default function Alphabet() {
         </>
       ) : (
         /* Detail view */
-        <div className="max-w-md mx-auto animate-slide-up">
+        <div 
+          className="max-w-md mx-auto animate-slide-up"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <button
             onClick={() => setSelected(null)}
             className="mb-4 text-kids-blue font-bold text-lg"
           >
             {t('common.back')}
           </button>
+
+          {/* Navigation arrows */}
+          <div className="flex items-center justify-between mb-4">
+            <button
+              onClick={goToPrevLetter}
+              className="p-3 bg-white rounded-full shadow-md border-2 border-black/10 active:scale-90 transition-all"
+            >
+              <ChevronLeft className="w-6 h-6 text-kids-blue" />
+            </button>
+            <span className="text-sm text-kids-text/50 font-bold">
+              {currentIndex + 1} / {letterKeys.length}
+            </span>
+            <button
+              onClick={goToNextLetter}
+              className="p-3 bg-white rounded-full shadow-md border-2 border-black/10 active:scale-90 transition-all"
+            >
+              <ChevronRight className="w-6 h-6 text-kids-blue" />
+            </button>
+          </div>
 
           {/* Letter display */}
           <div className="flex items-center gap-4 mb-4">
